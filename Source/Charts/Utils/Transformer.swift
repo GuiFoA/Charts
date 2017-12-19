@@ -8,7 +8,6 @@
 //
 //  https://github.com/danielgindi/Charts
 //
-
 import Foundation
 import CoreGraphics
 
@@ -18,38 +17,38 @@ open class Transformer: NSObject
 {
     /// matrix to map the values to the screen pixels
     internal var _matrixValueToPx = CGAffineTransform.identity
-
+    
     /// matrix for handling the different offsets of the chart
     internal var _matrixOffset = CGAffineTransform.identity
-
+    
     internal var _viewPortHandler: ViewPortHandler
-
+    
     @objc public init(viewPortHandler: ViewPortHandler)
     {
         _viewPortHandler = viewPortHandler
     }
-
+    
     /// Prepares the matrix that transforms values to pixels. Calculates the scale factors from the charts size and offsets.
     @objc open func prepareMatrixValuePx(chartXMin: Double, deltaX: CGFloat, deltaY: CGFloat, chartYMin: Double)
     {
         var scaleX = (_viewPortHandler.contentWidth / deltaX)
         var scaleY = (_viewPortHandler.contentHeight / deltaY)
         
-        if CGFloat.infinity == scaleX
+        if .infinity == scaleX
         {
             scaleX = 0.0
         }
-        if CGFloat.infinity == scaleY
+        if .infinity == scaleY
         {
             scaleY = 0.0
         }
-
+        
         // setup all matrices
         _matrixValueToPx = CGAffineTransform.identity
-        _matrixValueToPx = _matrixValueToPx.scaledBy(x: scaleX, y: -scaleY)
-        _matrixValueToPx = _matrixValueToPx.translatedBy(x: CGFloat(-chartXMin), y: CGFloat(-chartYMin))
+            .scaledBy(x: scaleX, y: -scaleY)
+            .translatedBy(x: CGFloat(-chartXMin), y: CGFloat(-chartYMin))
     }
-
+    
     /// Prepares the matrix that contains all offsets.
     @objc open func prepareMatrixOffset(inverted: Bool)
     {
@@ -60,19 +59,16 @@ open class Transformer: NSObject
         else
         {
             _matrixOffset = CGAffineTransform(scaleX: 1.0, y: -1.0)
-            _matrixOffset = _matrixOffset.translatedBy(x: _viewPortHandler.offsetLeft, y: -_viewPortHandler.offsetTop)
+                .translatedBy(x: _viewPortHandler.offsetLeft, y: -_viewPortHandler.offsetTop)
         }
     }
-
+    
     /// Transform an array of points with all matrices.
     // VERY IMPORTANT: Keep matrix order "value-touch-offset" when transforming.
     open func pointValuesToPixel(_ points: inout [CGPoint])
     {
         let trans = valueToPixelMatrix
-        for i in 0 ..< points.count
-        {
-            points[i] = points[i].applying(trans)
-        }
+        points = points.map { $0.applying(trans) }
     }
     
     open func pointValueToPixel(_ point: inout CGPoint)
@@ -100,7 +96,7 @@ open class Transformer: NSObject
         let top = r.origin.y * CGFloat(phaseY)
         r.size.height = bottom - top
         r.origin.y = top
-
+        
         r = r.applying(valueToPixelMatrix)
     }
     
@@ -121,27 +117,19 @@ open class Transformer: NSObject
         
         r = r.applying(valueToPixelMatrix)
     }
-
+    
     /// transforms multiple rects with all matrices
     open func rectValuesToPixel(_ rects: inout [CGRect])
     {
         let trans = valueToPixelMatrix
-        
-        for i in 0 ..< rects.count
-        {
-            rects[i] = rects[i].applying(trans)
-        }
+        rects = rects.map { $0.applying(trans) }
     }
     
     /// Transforms the given array of touch points (pixels) into values on the chart.
     open func pixelsToValues(_ pixels: inout [CGPoint])
     {
         let trans = pixelToValueMatrix
-        
-        for i in 0 ..< pixels.count
-        {
-            pixels[i] = pixels[i].applying(trans)
-        }
+        pixels = pixels.map { $0.applying(trans) }
     }
     
     /// Transforms the given touch point (pixels) into a value on the chart.
