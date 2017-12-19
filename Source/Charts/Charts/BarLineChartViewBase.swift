@@ -192,15 +192,15 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         {
             _xAxisRenderer?.computeAxis(min: _xAxis._axisMinimum, max: _xAxis._axisMaximum, inverted: false)
         }
-        
-        _xAxisRenderer?.renderAxisLine(context: context)
-        _leftYAxisRenderer?.renderAxisLine(context: context)
-        _rightYAxisRenderer?.renderAxisLine(context: context)
 
         // The renderers are responsible for clipping, to account for line-width center etc.
         _xAxisRenderer?.renderGridLines(context: context)
         _leftYAxisRenderer?.renderGridLines(context: context)
         _rightYAxisRenderer?.renderGridLines(context: context)
+        // X,Y轴绘制放在网格线（gridLine）之后 防止被网格线覆盖
+        _xAxisRenderer?.renderAxisLine(context: context)
+        _leftYAxisRenderer?.renderAxisLine(context: context)
+        _rightYAxisRenderer?.renderAxisLine(context: context)
         
         if _xAxis.isEnabled && _xAxis.isDrawLimitLinesBehindDataEnabled
         {
