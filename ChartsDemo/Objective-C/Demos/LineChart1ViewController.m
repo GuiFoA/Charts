@@ -227,7 +227,7 @@
     {
         for (id<ILineChartDataSet> set in _chartView.data.dataSets)
         {
-            set.drawSteppedEnabled = !set.isDrawSteppedEnabled;
+            set.mode = LineChartModeStepped;
         }
 
         [_chartView setNeedsDisplay];
