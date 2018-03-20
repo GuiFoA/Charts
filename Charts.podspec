@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = "10.11"
   s.source = { :git => "https://github.com/GuiFoA/Charts.git", :tag => "v#{s.version}" }
   s.default_subspec = "Core"
-
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
   s.subspec "Core" do |ss|
     ss.source_files  = "Source/Charts/**/*.swift"
   end
